@@ -209,6 +209,7 @@ class StockPicking(models.Model):
             self, picking_ids, moves, journal_id, inv_type='out_invoice'):
 
         invoice_obj = self.env['account.invoice']
+        invoice_line_obj = self.env['account.invoice.line']
         move_obj = self.env['stock.move']
         invoices = {}
         is_extra_move, extra_move_tax = move_obj._get_moves_taxes(
@@ -270,7 +271,11 @@ class StockPicking(models.Model):
                 while index < len(invoice_line):
                     for line in invoice_line[index]:
                         if type(line) is dict:
-                            result_invoice_line.append([0, 0, line])
+                            result_invoice_line.append(
+                                [0, 0, invoice_line_obj._convert_to_write(
+                                    line
+                                )]
+                            )
                     index += 1
 
             invoice_id.write({'invoice_line_ids': result_invoice_line})
