@@ -70,9 +70,9 @@ class StockMove(models.Model):
                 price = pricelist_obj.price_get(
                     [pricelist], move_line.product_id.id,
                     move_line.product_uom_qty, move_line.partner_id.id, {
-                            'uom': move_line.product_uom.id,
-                            'date': move_line.date,
-                            })[pricelist]
+                        'uom': move_line.product_uom.id,
+                        'date': move_line.date,
+                    })[pricelist]
                 if price:
                     return price
         return move_line.product_id.lst_price
@@ -130,7 +130,7 @@ class StockPicking(models.Model):
         inverse=_set_inv_state,
         store=True,
         default='none'
-        )
+    )
 
     @api.model
     def _create_invoice_from_picking(self, picking, vals):
