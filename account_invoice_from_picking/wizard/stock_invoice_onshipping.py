@@ -155,6 +155,6 @@ class StockInvoiceOnshipping(models.TransientModel):
             active_ids=active_ids,
             journal_id=self.journal_id.id,
             group=self.group,
-            type=inv_type,
+            inv_type=inv_type,
         )
         return res
