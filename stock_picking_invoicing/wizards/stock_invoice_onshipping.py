@@ -362,9 +362,7 @@ class StockInvoiceOnshipping(models.TransientModel):
             'journal_id': journal.id,
             'picking_ids': [(4, p.id, False) for p in pickings],
         })
-
-        invoice, values = self._simulate_invoice_onchange(values)
-        return invoice, values
+        return values
 
     @api.multi
     def _get_move_key(self, move):
@@ -414,7 +412,7 @@ class StockInvoiceOnshipping(models.TransientModel):
         return values
 
     @api.multi
-    def _get_invoice_line_values(self, moves, invoice_values, invoice):
+    def _get_invoice_line_values(self, moves, invoice_values):
         """
         Create invoice line values from given moves
         :param moves: stock.move
@@ -472,7 +470,6 @@ class StockInvoiceOnshipping(models.TransientModel):
             'price_unit': price,
             'invoice_line_tax_ids': [(6, 0, taxes.ids)],
             'move_line_ids': move_line_ids,
-            'invoice_id': invoice.id,
         })
 
         values = self._simulate_invoice_line_onchange(values, price_unit=price)
@@ -520,14 +517,14 @@ class StockInvoiceOnshipping(models.TransientModel):
             grouped_moves_list = self._group_moves(moves)
             parts = self.ungroup_moves(grouped_moves_list)
             for moves_list in parts:
-                invoice, invoice_values = self._build_invoice_values_from_pickings(
+                invoice_values = self._build_invoice_values_from_pickings(
                     pickings
                 )
                 lines = [(5, 0, {})]
                 line_values = False
                 for moves in moves_list:
                     line_values = self._get_invoice_line_values(
-                        moves, invoice_values, invoice
+                        moves, invoice_values
                     )
                     if line_values:
                         lines.append((0, 0, line_values))
