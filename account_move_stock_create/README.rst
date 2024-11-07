@@ -10,9 +10,9 @@ Account Move Stock Create
    !! source digest: sha256:d6d4854666e5badaa6d03f574dd80462df7efbed75f3b700eddbba2277927b10
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-.. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
+.. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
-    :alt: Beta
+    :alt: Alpha
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
@@ -29,6 +29,11 @@ Account Move Stock Create
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
 This module enables the creation of stock transfers directly from invoices, streamlining the inventory update process and ensuring alignment between sales and stock levels.
+
+.. IMPORTANT::
+   This is an alpha version, the data model and design can change at any time without warning.
+   Only for development or testing purpose, do not use in production.
+   `More details on development status <https://odoo-community.org/page/development-status>`_
 
 **Table of contents**
 
@@ -48,6 +53,13 @@ Usage
 #. Click on *Action > Create Stock Picking*.
 #. Pickings are linked to invoices using *stock_picking_invoice_link* from [OCA/stock-logistics-workflow](https://github.com/OCA/stock-logistics-workflow)
 
+Known issues / Roadmap
+======================
+
+- Add tests
+- Create a group_by/setup wizard structure (similar to stock_invoice_onshipping)
+- Adapt to new PO/Bill matching system from v18
+
 Bug Tracker
 ===========
 
@@ -64,7 +76,7 @@ Credits
 Authors
 ~~~~~~~
 
-* KMEE INFORMATICA LTDA
+* KMEE
 
 Contributors
 ~~~~~~~~~~~~

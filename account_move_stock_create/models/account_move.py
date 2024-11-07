@@ -18,15 +18,31 @@ class AccountInvoice(models.Model):
     _inherit = "account.move"
 
     def action_generate_pickings_from_invoices(self):
-        """Generate pickings from invoices."""
+        """Generate pickings from invoice lines."""
+        # Check invoice eligibility
+        non_cancelled_invoices = self.filtered(lambda inv: inv.state != "cancel")
+        if not non_cancelled_invoices:
+            raise UserError(_("Can't create stock transfer for cancelled invoices."))
+        # Check invoice lines eligibility
+        eligible_inv_line_ids = non_cancelled_invoices.mapped("invoice_line_ids")
+        inv_lines_wo_transfer = eligible_inv_line_ids.filtered(
+            lambda inv_line: not inv_line.move_line_ids
+        )
+        # If every move_line already has a transfer than raise
+        if not inv_lines_wo_transfer:
+            raise UserError(_("No invoice lines are elligible for stock transfering."))
+        # Filter eligible invoice lines and generate transfers for them
         for record in self:
-            if record.picking_ids and len(self) == 1:
-                raise UserError(
-                    _("There's already a picking created for this account move.")
-                )
-            elif record.picking_ids:
-                continue
-            record.generate_picking_from_invoice()
+            transferable_inv_line_ids = record._get_transferable_move_lines()
+            if transferable_inv_line_ids:
+                record.generate_picking_from_invoice()
+
+    def _get_transferable_move_lines(self):
+        """Returns the invoice_line_ids that have no picking_id."""
+        transferable_inv_line_ids = self.invoice_line_ids.filtered(
+            lambda inv_line: not inv_line.move_line_ids.picking_id
+        )
+        return transferable_inv_line_ids
 
     def generate_picking_from_invoice(self):
         """Generate a picking from the invoice."""
@@ -65,9 +81,10 @@ class AccountInvoice(models.Model):
         }
 
         # Moves
+        transferable_move_line_ids = self._get_transferable_move_lines()
         move_values = [
             self._prepare_stock_move_values(line, picking_values)
-            for line in self.invoice_line_ids
+            for line in transferable_move_line_ids
         ]
         picking_values["move_lines"] = [(0, 0, move) for move in move_values]
 

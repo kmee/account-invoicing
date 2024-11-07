@@ -7,7 +7,7 @@
     "summary": """This addon creates stock transfers from an account move""",
     "version": "14.0.1.0.0",
     "license": "AGPL-3",
-    "author": "KMEE INFORMATICA LTDA,Odoo Community Association (OCA)",
+    "author": "KMEE,Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/account-invoicing",
     "depends": [
         "stock",
@@ -18,4 +18,5 @@
         "views/account_move_views.xml",
     ],
     "demo": [],
+    "development_status": "Alpha",
 }
