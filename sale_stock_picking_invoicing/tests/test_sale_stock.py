@@ -655,3 +655,17 @@ class TestSaleStockPickingInvoicing(TestSaleStockPickingInvoicingCommon):
         self.assertEqual(picking.invoice_state, "invoiced")
         for move in picking.move_ids:
             self.assertEqual(move.invoice_state, "invoiced")
+
+    def test_16_invoice_origin_message(self):
+        """The origin message posted on the invoice names the invoice, not the
+        picking, and links the picking as its origin"""
+        picking = self.run_sale_picking_process(self.sale_order_1)
+        invoice = create_with_form_inv_onshipping(self.env, picking)
+        move_name = self.env["ir.model"]._get(invoice._name).name.lower()
+        picking_name = self.env["ir.model"]._get(picking._name).name.lower()
+        bodies = invoice.message_ids.mapped("body")
+        origin = [body for body in bodies if "has been created from" in body]
+        self.assertEqual(len(origin), 1)
+        self.assertIn(f"This {move_name} has been created from", origin[0])
+        self.assertNotIn(f"This {picking_name} has been created from", origin[0])
+        self.assertIn(picking.name, origin[0])
